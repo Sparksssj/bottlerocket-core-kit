@@ -6,6 +6,8 @@ License: GPL-2.0-only AND LGPL-2.1-only
 URL: https://xfs.wiki.kernel.org
 Source0: http://kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-%{version}.tar.xz
 
+Patch1000: 0001-mkfs-source-defaults-from-config-file.patch
+
 BuildRequires: %{_cross_os}glibc-devel
 BuildRequires: %{_cross_os}libuuid-devel
 BuildRequires: %{_cross_os}libinih-devel
@@ -14,6 +16,9 @@ BuildRequires: %{_cross_os}libblkid-devel
 
 Requires: %{_cross_os}liburcu
 Requires: %{_cross_os}libinih
+Requires: (%{_cross_os}kernel-5.10-mkfs-confs if %{_cross_os}kernel-5.10)
+Requires: (%{_cross_os}kernel-5.15-mkfs-confs if %{_cross_os}kernel-5.15)
+Requires: (%{_cross_os}kernel-6.1-mkfs-confs if %{_cross_os}kernel-6.1)
 
 %description
 %{summary}.
@@ -26,7 +31,7 @@ Requires: %{name}
 %{summary}.
 
 %prep
-%autosetup -n xfsprogs-%{version}
+%autosetup -n xfsprogs-%{version} -p1
 
 %build
 %cross_configure \

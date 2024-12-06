@@ -1,0 +1,89 @@
+From b20a9a213e1f4901072f559e3aef4797b5955c59 Mon Sep 17 00:00:00 2001
+From: Sparks Song <shijiao@amazon.com>
+Date: Wed, 4 Dec 2024 23:47:28 +0000
+Subject: [PATCH] mkfs: source defaults from config file to make nrext64
+ default off on multiple kernel versions
+
+---
+ mkfs/xfs_mkfs.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/mkfs/xfs_mkfs.c b/mkfs/xfs_mkfs.c
+index 6d2469c..1f6f643 100644
+--- a/mkfs/xfs_mkfs.c
++++ b/mkfs/xfs_mkfs.c
+@@ -39,6 +39,9 @@
+  */
+ #define WHACK_SIZE (128 * 1024)
+
++/* Default path for the mkfs.xfs configuration file */
++#define DEFAULT_CONFIG_PATH "/usr/share/xfs/mkfs.xfs.conf"
++
+ /*
+  * XXX: The configured block and sector sizes are defined as global variables so
+  * that they don't need to be passed to getnum/cvtnum().
+@@ -4271,6 +4274,44 @@ cfgfile_parse(
+ 		cli->cfgfile);
+ }
+
++
++/* This function is similar to cfgfile_parse() and specifically parses
++ * default config files. It doesn’t exit on failure.
++ */
++static void
++cfgfile_parse_default(
++	struct cli_params	*cli)
++{
++	int			error;
++
++	if (!cli->cfgfile)
++		return;
++
++	error = ini_parse(cli->cfgfile, cfgfile_parse_ini, cli);
++	if (error) {
++		if (error > 0) {
++			fprintf(stderr,
++		_("%s: Unrecognised input on line %d. Aborting.\n"),
++				cli->cfgfile, error);
++		} else if (error == -1) {
++			fprintf(stderr,
++		_("Unable to open default config file %s. Aborting.\n"),
++				cli->cfgfile);
++		} else if (error == -2) {
++			fprintf(stderr,
++		_("Memory allocation failure parsing %s. Aborting.\n"),
++				cli->cfgfile);
++		} else {
++			fprintf(stderr,
++		_("Unknown error %d opening default config file %s. Aborting.\n"),
++				error, cli->cfgfile);
++		}
++	} else {
++		printf(_("Parameters parsed from default config file %s successfully\n"),
++			cli->cfgfile);
++	}
++}
++
+ int
+ main(
+ 	int			argc,
+@@ -4428,7 +4469,15 @@ main(
+ 	 * the options from this file parsed, we can then proceed with parameter
+ 	 * and bounds checking and making the filesystem.
+ 	 */
+-	cfgfile_parse(&cli);
++
++	if (cli.cfgfile == NULL) {
++		/* No user config file specified, try default config */
++		cli.cfgfile = DEFAULT_CONFIG_PATH;
++		cfgfile_parse_default(&cli);
++	} else {
++		/* User specified their own config file, use that */
++		cfgfile_parse(&cli);
++	}
+
+ 	protostring = setup_proto(cli.protofile);
+
+--
+2.47.0
+
