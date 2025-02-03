@@ -1,0 +1,42 @@
+From eea379598278cc62a74c9932f624c89407a966f8 Mon Sep 17 00:00:00 2001
+From: Sparks Song <shijiao@amazon.com>
+Date: Mon, 3 Feb 2025 22:44:31 +0000
+Subject: [PATCH] mkfs: source defaults from config file to make nrext64
+ default off on multiple kernel versions
+
+---
+ mkfs/xfs_mkfs.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/mkfs/xfs_mkfs.c b/mkfs/xfs_mkfs.c
+index 6d2469c..87e7457 100644
+--- a/mkfs/xfs_mkfs.c
++++ b/mkfs/xfs_mkfs.c
+@@ -39,6 +39,9 @@
+  */
+ #define WHACK_SIZE (128 * 1024)
+
++/* Default path for the mkfs.xfs configuration file */
++#define DEFAULT_CONFIG_PATH "/usr/share/xfsprogs/mkfs/default.conf"
++
+ /*
+  * XXX: The configured block and sector sizes are defined as global variables so
+  * that they don't need to be passed to getnum/cvtnum().
+@@ -4428,6 +4431,14 @@ main(
+ 	 * the options from this file parsed, we can then proceed with parameter
+ 	 * and bounds checking and making the filesystem.
+ 	 */
++
++	if (cli.cfgfile == NULL) {
++		struct stat defcfg_statbuf;
++		if (stat(DEFAULT_CONFIG_PATH, &defcfg_statbuf) == 0) {
++			cli.cfgfile = DEFAULT_CONFIG_PATH;
++		}
++	}
++
+ 	cfgfile_parse(&cli);
+
+ 	protostring = setup_proto(cli.protofile);
+--
+2.47.0
+

@@ -8,6 +8,8 @@ Source0: http://kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-%{version}.t
 Source1: http://kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-%{version}.tar.sign
 Source2: gpgkey-0C1D891C50A732E0680F7B644675A111E50B5FA6.asc
 
+Patch1000: 0001-mkfs-source-defaults-from-config-file.patch
+
 BuildRequires: %{_cross_os}glibc-devel
 BuildRequires: %{_cross_os}libuuid-devel
 BuildRequires: %{_cross_os}libinih-devel
@@ -29,7 +31,7 @@ Requires: %{name}
 
 %prep
 %{gpgverify} --data=<(xzcat %{S:0}) --signature=%{S:1} --keyring=%{S:2}
-%autosetup -n xfsprogs-%{version}
+%autosetup -n xfsprogs-%{version} -p1
 
 %build
 %cross_configure \
