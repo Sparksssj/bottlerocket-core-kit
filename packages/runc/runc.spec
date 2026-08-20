@@ -1,8 +1,8 @@
 %global goproject github.com/opencontainers
 %global gorepo runc
 %global goimport %{goproject}/%{gorepo}
-%global commit 491b69bab9fa206b984fb26ba07d3110d62e671f
-%global gover 1.3.6
+%global commit 8f2685a471d3347a686ad3909783d8aafc6bb208
+%global gover 1.5.1
 
 %global _dwz_low_mem_die_limit 0
 
@@ -13,8 +13,8 @@ Epoch: 1
 Summary: CLI for running Open Containers
 License: Apache-2.0
 URL: https://%{goimport}
-Source0: https://%{goimport}/releases/download/v%{gover}/%{gorepo}.tar.xz#/%{gorepo}-v%{gover}.tar.xz
-Source1: https://%{goimport}/releases/download/v%{gover}/%{gorepo}.tar.xz.asc#/%{gorepo}-v%{gover}.tar.xz.asc
+Source0: https://%{goimport}/releases/download/v%{gover}/%{gorepo}-%{gover}.tar.xz#/%{gorepo}-v%{gover}.tar.xz
+Source1: https://%{goimport}/releases/download/v%{gover}/%{gorepo}-%{gover}.tar.xz.asc#/%{gorepo}-v%{gover}.tar.xz.asc
 # Aleksa Sarai
 Source2: gpgkey-B64E4955B29FA3D463F2A9062897FAD2B7E9446F.asc
 # Kir Kolyshkin
